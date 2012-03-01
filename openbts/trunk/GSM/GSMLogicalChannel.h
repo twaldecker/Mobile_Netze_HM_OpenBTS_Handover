@@ -270,7 +270,7 @@ public:
 
 	protected:
 
-	/**
+	/**LogicalChannel
 		Make the normal inter-layer connections.
 		Should be called from inside the constructor after
 		the channel components are created.

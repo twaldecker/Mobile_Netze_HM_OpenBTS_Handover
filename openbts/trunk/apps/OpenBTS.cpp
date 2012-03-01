@@ -58,6 +58,8 @@ ConfigurationTable gConfig("/etc/OpenBTS/OpenBTS.db");
 #include <string.h>
 #include <signal.h>
 
+#include "../GSM/GSMHandover.h"
+
 #ifdef HAVE_LIBREADLINE // [
 //#  include <stdio.h>
 #  include <readline/readline.h>
@@ -95,6 +97,9 @@ TransceiverManager gTRX(gConfig.getStr("TRX.IP").c_str(), gConfig.getNum("TRX.Po
 
 // Subscriber registry
 SubscriberRegistry gSubscriberRegistry;
+
+// Create a Global Handover Decision Class
+GSMHandoverDecision gHandoverDecision;
 
 
 /** Define a function to call any time the configuration database changes. */

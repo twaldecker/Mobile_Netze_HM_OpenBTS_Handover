@@ -271,6 +271,7 @@ void SACCHLogicalChannel::serviceLoop()
 					// Add the measurement results to the table
 					// Note that the typeAndOffset of a SACCH match the host channel.
 					gPhysStatus.setPhysical(this, mMeasurementResults);
+					gHandoverDecision.switchMeasurement(this, mMeasurementResults);
 				} else {
 					OBJLOG(NOTICE) << "SACCH SAP0 sent unaticipated message " << rrMessage;
 				}
