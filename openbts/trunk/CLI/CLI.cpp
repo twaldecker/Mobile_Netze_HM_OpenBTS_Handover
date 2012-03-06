@@ -729,6 +729,13 @@ int noise(int argc, char** argv, ostream& os, istream& is)
         return SUCCESS;
 }
 
+// NEW command
+int showmr(int argc, char** argv, ostream& os, istream& is)
+{
+	gPhysStatus.dump(os);
+	
+	return SUCCESS;
+}
 
 //@} // CLI commands
 
@@ -760,6 +767,7 @@ void Parser::addCommands()
 	addCommand("unconfig", unconfig, "key -- remove a config value");
 	addCommand("notices", notices, "-- show startup copyright and legal notices");
 	addCommand("endcall", endcall,"trans# -- terminate the given transaction");
+	addCommand("showmr", showmr,"show measurement results");
 }
 
 

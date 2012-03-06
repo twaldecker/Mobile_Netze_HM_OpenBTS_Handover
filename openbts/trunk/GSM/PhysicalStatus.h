@@ -76,7 +76,7 @@ public:
 		Dump the physical status table to the output stream.
 		@param os The output stream to dump the channel information to.
 	*/
-//	void dump(std::ostream& os) const;
+	void dump(std::ostream& os) const;
 
 	private:
 

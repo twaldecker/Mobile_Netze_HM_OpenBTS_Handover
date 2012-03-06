@@ -25,23 +25,32 @@
 
 #ifndef GSMHANDOVER_H
 #define GSMHANDOVER_H
-class GSMHandoverDecision {
-  private:
-	//TODO- make me dynamic
-	GSMMeasurementStorage measurementSlots[100];
-  public:
-    void switchMeasurement(SACCHLogicalChannel& , L3MeasurementResults&);
-}
+
+#include "GSML3RRElements.h"
+#include "GSMLogicalChannel.h"
+#include <map>
+
+namespace GSM {
 
 class GSMMeasurementStorage {
   private:
-	volatile bool myMutex // no mutex atomic volatile
-	L3ChannelDescription channelDescriptopn;
+	size_t log;
+	SACCHLogicalChannel cSACCH;
 	L3MeasurementResults measurementResults;
-	bool decide(unsigned *);
-	bool allocNewTCH(SACCHLogicalChannel&);
+	void performHandover(TCHFACCHLogicalChannel &);
   public:
-	GSMMeasurementStorage(SACCHLogicalChannel&, L3MeasurementResults&);
-	void addMeasurementResult(L3MeasurementResults&);
+	GSMMeasurementStorage(SACCHLogicalChannel const&, L3MeasurementResults const&);
+	void addMeasurementResult(L3MeasurementResults const&);
+};
+
+class GSMHandoverDecision {
+  private:
+	typedef std::map<unsigned int, GSMMeasurementStorage> indexed_storage;
+	indexed_storage measurementSlots;
+  public:
+    void switchMeasurement(SACCHLogicalChannel const& , L3MeasurementResults const&);
+};
 }
+extern GSM::GSMHandoverDecision gHandoverDecision;
+
 #endif // GSMHANDOVER_H

@@ -33,7 +33,7 @@
 #include "GSML3RRMessages.h"
 #include "GSMLogicalChannel.h"
 #include "GSMConfig.h"
-
+#include "GSMHandover.h"
 #include <TransactionTable.h>
 #include <SMSControl.h>
 #include <ControlCommon.h>
@@ -43,8 +43,6 @@
 
 using namespace std;
 using namespace GSM;
-
-
 
 void LogicalChannel::open()
 {
@@ -271,7 +269,7 @@ void SACCHLogicalChannel::serviceLoop()
 					// Add the measurement results to the table
 					// Note that the typeAndOffset of a SACCH match the host channel.
 					gPhysStatus.setPhysical(this, mMeasurementResults);
-					gHandoverDecision.switchMeasurement(this, mMeasurementResults);
+					gHandoverDecision.switchMeasurement(*this, mMeasurementResults);
 				} else {
 					OBJLOG(NOTICE) << "SACCH SAP0 sent unaticipated message " << rrMessage;
 				}
