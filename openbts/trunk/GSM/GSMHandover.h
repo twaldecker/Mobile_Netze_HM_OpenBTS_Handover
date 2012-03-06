@@ -32,25 +32,27 @@
 
 namespace GSM {
 
-class GSMMeasurementStorage {
+class GSMHOActiveCalls {
   private:
-	size_t log;
+	unsigned int count;
 	SACCHLogicalChannel cSACCH;
-	L3MeasurementResults measurementResults;
-	void performHandover(TCHFACCHLogicalChannel &);
+	L3MeasurementResults measRes;
   public:
-	GSMMeasurementStorage(SACCHLogicalChannel const&, L3MeasurementResults const&);
-	void addMeasurementResult(L3MeasurementResults const&);
+	GSMHOActiveCalls(SACCHLogicalChannel const&, L3MeasurementResults const&);
+	void addMeasRes(L3MeasurementResults const&);
+	bool decideHandover(void);
+	TCHFACCHLogicalChannel* allocNewTCH(void);
+	void performHandover(TCHFACCHLogicalChannel &);
 };
 
-class GSMHandoverDecision {
+class GSMHandover {
   private:
-	typedef std::map<unsigned int, GSMMeasurementStorage> indexed_storage;
-	indexed_storage measurementSlots;
+	typedef std::map<unsigned int, GSMHOActiveCalls> ixCallStorage;
+	ixCallStorage ixCallSlots;
   public:
-    void switchMeasurement(SACCHLogicalChannel const& , L3MeasurementResults const&);
+    void storeMeasRes(SACCHLogicalChannel const& , L3MeasurementResults const&);
 };
 }
-extern GSM::GSMHandoverDecision gHandoverDecision;
+extern GSM::GSMHandover gHandover;
 
 #endif // GSMHANDOVER_H

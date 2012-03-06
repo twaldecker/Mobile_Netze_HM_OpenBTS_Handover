@@ -99,7 +99,7 @@ TransceiverManager gTRX(gConfig.getStr("TRX.IP").c_str(), gConfig.getNum("TRX.Po
 SubscriberRegistry gSubscriberRegistry;
 
 // Create a Global Handover Decision Class
-GSM::GSMHandoverDecision gHandoverDecision;
+GSM::GSMHandover gHandover;
 
 
 /** Define a function to call any time the configuration database changes. */

@@ -2,6 +2,7 @@
 
 #include "GSMHandover.h"
 #include "GSMConfig.h"
+#include <stdlib.h>
 
 #include <iostream>
 
@@ -9,68 +10,86 @@ using namespace std;
 
 namespace GSM {
 
-/* Identify the meassurement results by SACCH and store them */
-void GSMHandoverDecision::switchMeasurement(SACCHLogicalChannel const& sACCHLogicalChannel, L3MeasurementResults const& l3MeasurementResults) {
-  unsigned int tslot = sACCHLogicalChannel.TN();
-  indexed_storage::iterator i = measurementSlots.find(tslot);
-  if(measurementSlots.end()==i)
+/* Identify the measurement results by SACCH and store them */
+void GSMHandover::storeMeasRes(SACCHLogicalChannel const& cSACCH, L3MeasurementResults const& measRes) {
+  unsigned int tSlot = cSACCH.TN();
+  ixCallStorage::iterator it = ixCallSlots.find(tSlot);
+  if(it == ixCallSlots.end())
   {
-	measurementSlots.insert(make_pair(tslot,GSMMeasurementStorage(sACCHLogicalChannel, l3MeasurementResults)));
+	  ixCallSlots.insert(make_pair(tSlot,GSMHOActiveCalls(cSACCH, measRes)));
     return;
   }
-  i->second.addMeasurementResult(l3MeasurementResults);
+  it->second.addMeasRes(measRes);
 }
 
-/* Constructor for storage class */
-GSMMeasurementStorage::GSMMeasurementStorage(SACCHLogicalChannel const&  sACCHLogicalChannel, L3MeasurementResults const& l3MeasurementResults)
-  : log()
-  , cSACCH(sACCHLogicalChannel)
-  , measurementResults(l3MeasurementResults)
+/* Constructor */
+GSMHOActiveCalls::GSMHOActiveCalls(SACCHLogicalChannel const&  cSACCH, L3MeasurementResults const& measRes)
+  : count()
+  , cSACCH(cSACCH)
+  , measRes(measRes)
 {}
 
-/* Add new result and perform handover logic */
-void GSMMeasurementStorage::addMeasurementResult(L3MeasurementResults const& m) {
+/* Add new result and perform handover */
+void GSMHOActiveCalls::addMeasRes(L3MeasurementResults const& measRes) {
   /* Info output */
-  if(log++%200) {
+  if(count++%1000) {
   cout
-       << "MEAS VALID: " << m.MEAS_VALID()
-	   << ", RXLEVEL_dBm: " << m.RXLEV_FULL_SERVING_CELL_dBm()
-	   << ", RXLEVEL_SUB_dBm" << m.RXLEV_SUB_SERVING_CELL_dBm()
-	   << ", RXQUAL_BER: " << m.RXQUAL_FULL_SERVING_CELL_BER()
-	   << ", RXQUAL_SUB_BER: " << m.RXQUAL_SUB_SERVING_CELL_BER()
-	   << ", NO_NCELL: " << m.NO_NCELL();
-  if(m.NO_NCELL() == 1)
-	  cout << ", RXLEV_NCELL_dBm: " << m.RXLEV_NCELL((unsigned int) 0)
-		   << ", BCCH_FREQ_NCELL: " << m.BCCH_FREQ_NCELL((unsigned int) 0);
+       << "MEAS VALID: " << measRes.MEAS_VALID()
+	   << ", RXLEVEL_dBm: " << measRes.RXLEV_FULL_SERVING_CELL_dBm()
+	   << ", RXLEVEL_SUB_dBm" << measRes.RXLEV_SUB_SERVING_CELL_dBm()
+	   << ", RXQUAL_BER: " << measRes.RXQUAL_FULL_SERVING_CELL_BER()
+	   << ", RXQUAL_SUB_BER: " << measRes.RXQUAL_SUB_SERVING_CELL_BER()
+	   << ", NO_NCELL: " << measRes.NO_NCELL();
+  if(measRes.NO_NCELL() == 1)
+	  cout << ", RXLEV_NCELL_dBm: " << measRes.RXLEV_NCELL((unsigned int) 0)
+		   << ", BCCH_FREQ_NCELL: " << measRes.BCCH_FREQ_NCELL((unsigned int) 0);
   cout << endl;
   }
+
   cout << "Descriptive String: " << this->cSACCH.descriptiveString() << endl;
+
+  /* Make a Handover decision */
+//  if(this->decideHandover()) {
+//	  TCHFACCHLogicalChannel* newTCH = this->allocNewTCH();
+//	  this->performHandover(*newTCH);
+//  }
+}
+
+bool GSMHOActiveCalls::decideHandover() {
+	return true;
+}
+
+TCHFACCHLogicalChannel* GSMHOActiveCalls::allocNewTCH() {
+  TCHFACCHLogicalChannel* newTCH = gBTS.getTCH();
+  return newTCH;
+}
+
+void GSMHOActiveCalls::performHandover(TCHFACCHLogicalChannel & newTCH) {
+  cout << "performHandover" << endl;
+/* Get the timeslot information from SACCH */
+  //char* desString = this->cSACCH.descriptiveString();
+/* Search for oldTCH */
   /* gBTS.TCHPool returns a vector */
   TCHList chList = gBTS.TCHPool();
-  /* use channel information (ARFCN and TN) and TCHList to identify oldTCH */
+  /* use channel timeslot information (TN) and TCHList to identify oldTCH */
   TCHFACCHLogicalChannel* oldTCH;
   TCHList::iterator it = chList.begin();
   while(it != chList.end()) {
-	  oldTCH = *it;
-	  if( (oldTCH->ARFCN() == this->cSACCH.ARFCN()) && (oldTCH->TN() == this->cSACCH.TN()) ) {
-		  break;
-		  cout << "oldTCH found at ARFCN: " << oldTCH->ARFCN() << "Timeslot: " << oldTCH->TN() << endl;
-	  }
-	  it++;
+    oldTCH = *it;
+    if( (oldTCH->ARFCN() == this->cSACCH.ARFCN()) && (oldTCH->TN() == this->cSACCH.TN()) ) {
+    	break;
+    	cout << "oldTCH found at ARFCN: " << oldTCH->ARFCN() << "Timeslot: " << oldTCH->TN() << endl;
+    }
+    it++;
   }
-  //this->performHandover(*oldTCH);
-}
+  /* send handover command via oldTCH (FACCH) */
 
-void GSMMeasurementStorage::performHandover(TCHFACCHLogicalChannel & oldTCH) {
-  cout << "performHandover" << endl;
-  /* alloc new TCH */
-  //TCHFACCHLogicalChannel* newTCH = gBTS.getTCH();/* send handover command via oldTCH (FACCH) */
   /* search for connection counterpart of oldTCH and connect to newTCH */
 
   /* send handover command via oldTCH (FACCH) */
 
   /* release oldTCH */
-  oldTCH.send(GSM::RELEASE);
+  oldTCH->send(GSM::RELEASE);
 }
 
 }
