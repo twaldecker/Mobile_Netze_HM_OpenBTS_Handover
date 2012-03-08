@@ -688,6 +688,41 @@ class L3AssignmentFailure : public L3RRMessageNRO {
 
 };
 
+/** GSM 04.08 9.1.5 */
+class L3HandoverCommand : public L3RRMessageNRO {
+
+private:
+
+	L3ChannelDescription mChannelDescription;
+	L3PowerCommand	mPowerCommand;
+
+	bool mHaveMode1;
+	L3ChannelMode mMode1;
+
+public:
+
+	L3HandoverCommand(const L3ChannelDescription& wChannelDescription,
+			const L3ChannelMode& wMode1 )
+		:L3RRMessageNRO(),
+		mChannelDescription(wChannelDescription),
+		mHaveMode1(true),mMode1(wMode1)
+	{}
+
+	L3HandoverCommand(const L3ChannelDescription& wChannelDescription)
+		:L3RRMessageNRO(),
+		mChannelDescription(wChannelDescription),
+		mHaveMode1(false)
+	{}
+
+
+
+	int MTI() const { return (int) HandoverCommand; }
+
+	size_t l2BodyLength() const;
+	void writeBody( L3Frame &dest, size_t &wp ) const;
+	void text(std::ostream&) const;
+};
+
 
 /** GSM 04.08 9.1.29 */
 class L3RRStatus : public L3RRMessageNRO {

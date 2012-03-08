@@ -526,6 +526,34 @@ void L3AssignmentComplete::text(ostream& os) const
 	os << "cause=" << mCause;
 }
 
+void L3HandoverCommand::writeBody( L3Frame &dest, size_t &wp ) const
+{
+	dest.writeField(wp, 0xc263, 16); //cell description
+	mChannelDescription.writeV(dest, wp);
+	dest.writeField(wp, 0xfe, 8); //handover reference
+	mPowerCommand.writeV(dest, wp);
+
+	//if (mHaveMode1) mMode1.writeTV(0x63,dest,wp);
+}
+
+size_t L3HandoverCommand::l2BodyLength() const
+{
+	size_t len = mChannelDescription.lengthV();
+	len += mPowerCommand.lengthV();
+	len +=2; //cell description
+	len +=1; //handover reference
+	//if (mHaveMode1) len += mMode1.lengthTV();
+	return len;
+}
+
+void L3HandoverCommand::text(ostream& os) const
+{
+	L3RRMessage::text(os);
+	os <<"channelDescription=("<<mChannelDescription<<")";
+	os <<" powerCommand="<<mPowerCommand;
+	if (mHaveMode1) os << " mode1=" << mMode1;
+}
+
 
 void L3AssignmentFailure::parseBody(const L3Frame& src, size_t &rp)
 {

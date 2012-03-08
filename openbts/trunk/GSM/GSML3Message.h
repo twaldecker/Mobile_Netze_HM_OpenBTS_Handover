@@ -104,7 +104,7 @@ class L3Message {
 	/** Return the L3 protocol discriptor. */
 	virtual GSM::L3PD PD() const =0;
 
-	/** Return the messag type indicator (MTI). */
+	/** Return the message type indicator (MTI). */
 	virtual int MTI() const =0;
 
 

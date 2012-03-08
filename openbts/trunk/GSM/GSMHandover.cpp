@@ -49,8 +49,13 @@ void GSMHOActiveCalls::addMeasRes(L3MeasurementResults const& measRes) {
   }
 }
 
+/* FIESER HACK */
 bool GSMHOActiveCalls::decideHandover() {
-	return true;
+	if(!system("ls | grep doit")) {
+		system("rm doit");
+		return true;
+	}
+	return false;
 }
 
 TCHFACCHLogicalChannel* GSMHOActiveCalls::allocNewTCH() {
@@ -67,18 +72,17 @@ void GSMHOActiveCalls::performHandover(TCHFACCHLogicalChannel & newTCH) {
   TCHList::iterator it = chList.begin();
   while(it != chList.end()) {
     oldTCH = *it;
-    if( (oldTCH->ARFCN() == this->cSACCH.ARFCN()) && (oldTCH->TN() == this->cSACCH.TN()) ) {
-    	cout << "oldTCH found at ARFCN: " << oldTCH->ARFCN() << "Timeslot: " << oldTCH->TN() << endl;
+    if( (oldTCH->ARFCN() == this->cSACCH.ARFCN()) && (oldTCH->TN() == this->cSACCH.TN()) )
     	break;
-    }
     it++;
   }
 /* switch SIP connection from oldTCH to newTCH */
 
 /* send handover command via oldTCH (FACCH) */
-
+  cout << "sending HandoverCommand" << endl;
+  oldTCH->send(GSM::L3HandoverCommand(newTCH.channelDescription(),GSM::L3ChannelMode(GSM::L3ChannelMode::SpeechV1)));
 /* release oldTCH */
-  //oldTCH->send(GSM::RELEASE);
+  oldTCH->send(GSM::RELEASE);
 }
 
 }

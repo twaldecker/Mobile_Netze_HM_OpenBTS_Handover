@@ -77,22 +77,22 @@ static const char* createPhysicalStatus = {
 		"TIME_ADVC INTEGER DEFAULT NULL, "					// handset timing advance in symbol periods
 		"FER FLOAT DEFAULT NULL, "							// uplink FER
 		"NO_NCELL INTEGER DEFAULT NULL, "			// !!!NEW : 0...6, Anzahl der Nachbarzellen
-		"RXLEV_CELL_1 INTEGER DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 1
+		"RXLEV_CELL_1 FLOAT DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 1
 		"BCCH_FREQ_CELL_1 INTEGER DEFAULT NULL, "		// !!!NEW : 0...31, Broadcast Channel Freq. der Nachbarzelle 1
 		"BSIC_CELL_1 INTEGER DEFAULT NULL, "			// !!!NEW : 6-bit, Base Station ID Code der Nachbarzelle 1
-		"RXLEV_CELL_2 INTEGER DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 2
+		"RXLEV_CELL_2 FLOAT DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 2
 		"BCCH_FREQ_CELL_2 INTEGER DEFAULT NULL, "		// !!!NEW : 0...31, Broadcast Channel Freq. der Nachbarzelle 2
 		"BSIC_CELL_2 INTEGER DEFAULT NULL, "			// !!!NEW : 6-bit, Base Station ID Code der Nachbarzelle 2
-		"RXLEV_CELL_3 INTEGER DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 3
+		"RXLEV_CELL_3 FLOAT DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 3
 		"BCCH_FREQ_CELL_3 INTEGER DEFAULT NULL, "		// !!!NEW : 0...31, Broadcast Channel Freq. der Nachbarzelle 3
 		"BSIC_CELL_3 INTEGER DEFAULT NULL, "			// !!!NEW : 6-bit, Base Station ID Code der Nachbarzelle 3
-		"RXLEV_CELL_4 INTEGER DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 4
+		"RXLEV_CELL_4 FLOAT DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 4
 		"BCCH_FREQ_CELL_4 INTEGER DEFAULT NULL, "		// !!!NEW : 0...31, Broadcast Channel Freq. der Nachbarzelle 4
 		"BSIC_CELL_4 INTEGER DEFAULT NULL, "			// !!!NEW : 6-bit, Base Station ID Code der Nachbarzelle 4
-		"RXLEV_CELL_5 INTEGER DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 5
+		"RXLEV_CELL_5 FLOAT DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 5
 		"BCCH_FREQ_CELL_5 INTEGER DEFAULT NULL, "		// !!!NEW : 0...31, Broadcast Channel Freq. der Nachbarzelle 5
 		"BSIC_CELL_5 INTEGER DEFAULT NULL, "			// !!!NEW : 6-bit, Base Station ID Code der Nachbarzelle 5
-		"RXLEV_CELL_6 INTEGER DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 6
+		"RXLEV_CELL_6 FLOAT DEFAULT NULL, "			// !!!NEW : Empfangspegel der Nachbarzelle 6
 		"BCCH_FREQ_CELL_6 INTEGER DEFAULT NULL, "		// !!!NEW : 0...31, Broadcast Channel Freq. der Nachbarzelle 6
 		"BSIC_CELL_6 INTEGER DEFAULT NULL "			// !!!NEW : 6-bit, Base Station ID Code der Nachbarzelle 6
 	")"
@@ -309,12 +309,12 @@ void PhysicalStatus::dump(ostream& os) const
 		os << "RXQUAL_FULL_SERVING_CELL_BER\t=\t" << sqlite3_column_double(stmt, 10) << " dBm" << endl;
 		os << "RXQUAL_SUB_SERVING_CELL_BER\t=\t" << sqlite3_column_double(stmt, 11) << " dBm" << endl;        
 		os << "NO_NCELL\t\t\t=\t" << sqlite3_column_int(stmt, 12) << endl;
-		os << "RXLEV_CELL_1 = " << sqlite3_column_int(stmt, 13) << ", BCCH_FREQ_CELL_1 = " << sqlite3_column_int(stmt, 14) << ", BSIC_CELL_1 = " << sqlite3_column_int(stmt, 15) << endl;
-		os << "RXLEV_CELL_2 = " << sqlite3_column_int(stmt, 16) << ", BCCH_FREQ_CELL_2 = " << sqlite3_column_int(stmt, 17) << ", BSIC_CELL_2 = " << sqlite3_column_int(stmt, 18) << endl;
-		os << "RXLEV_CELL_3 = " << sqlite3_column_int(stmt, 19) << ", BCCH_FREQ_CELL_3 = " << sqlite3_column_int(stmt, 20) << ", BSIC_CELL_3 = " << sqlite3_column_int(stmt, 21) << endl;
-		os << "RXLEV_CELL_4 = " << sqlite3_column_int(stmt, 22) << ", BCCH_FREQ_CELL_4 = " << sqlite3_column_int(stmt, 23) << ", BSIC_CELL_4 = " << sqlite3_column_int(stmt, 24) << endl;
-		os << "RXLEV_CELL_5 = " << sqlite3_column_int(stmt, 25) << ", BCCH_FREQ_CELL_5 = " << sqlite3_column_int(stmt, 26) << ", BSIC_CELL_5 = " << sqlite3_column_int(stmt, 27) << endl;
-		os << "RXLEV_CELL_6 = " << sqlite3_column_int(stmt, 28) << ", BCCH_FREQ_CELL_6 = " << sqlite3_column_int(stmt, 29) << ", BSIC_CELL_6 = " << sqlite3_column_int(stmt, 30) << endl;
+		os << "RXLEV_CELL_1 = " << sqlite3_column_double(stmt, 13) << ", BCCH_FREQ_CELL_1 = " << sqlite3_column_int(stmt, 14) << ", BSIC_CELL_1 = " << sqlite3_column_int(stmt, 15) << endl;
+		os << "RXLEV_CELL_2 = " << sqlite3_column_double(stmt, 16) << ", BCCH_FREQ_CELL_2 = " << sqlite3_column_int(stmt, 17) << ", BSIC_CELL_2 = " << sqlite3_column_int(stmt, 18) << endl;
+		os << "RXLEV_CELL_3 = " << sqlite3_column_double(stmt, 19) << ", BCCH_FREQ_CELL_3 = " << sqlite3_column_int(stmt, 20) << ", BSIC_CELL_3 = " << sqlite3_column_int(stmt, 21) << endl;
+		os << "RXLEV_CELL_4 = " << sqlite3_column_double(stmt, 22) << ", BCCH_FREQ_CELL_4 = " << sqlite3_column_int(stmt, 23) << ", BSIC_CELL_4 = " << sqlite3_column_int(stmt, 24) << endl;
+		os << "RXLEV_CELL_5 = " << sqlite3_column_double(stmt, 25) << ", BCCH_FREQ_CELL_5 = " << sqlite3_column_int(stmt, 26) << ", BSIC_CELL_5 = " << sqlite3_column_int(stmt, 27) << endl;
+		os << "RXLEV_CELL_6 = " << sqlite3_column_double(stmt, 28) << ", BCCH_FREQ_CELL_6 = " << sqlite3_column_int(stmt, 29) << ", BSIC_CELL_6 = " << sqlite3_column_int(stmt, 30) << endl;
 		os << endl << "##################################################################" << endl;
 		
 	}
